@@ -19,9 +19,9 @@
                 <asp:Label ID="lblPrice" runat="server" CssClass="detailsPrice"></asp:Label><br/>
                 Quantity:
                 <asp:DropDownList ID="ddlAmount" runat="server"></asp:DropDownList><br/>
-                <asp:Button ID="btnAdd" runat="server" CssClass="button" OnClick="btnAdd_Click" Text="Add Product" />
+                <asp:Button ID="btnAdd" runat="server" CssClass="button" OnClick="btnAdd_Click" Text="Add Product" /><br/>
+                <asp:Label ID="lblResult" runat="server" Text=""></asp:Label>
             </td><br/>
-            <asp:Label ID="lblResult" runat="server" Text=""></asp:Label>
         </tr>
         <tr>
             <td>Product No:
