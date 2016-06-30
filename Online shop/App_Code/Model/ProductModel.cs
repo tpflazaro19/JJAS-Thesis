@@ -66,4 +66,55 @@ public class ProductModel
             return "Error:" + e;
         }
     }
+
+    public Product GetProduct(int id)
+    {
+        try
+        {
+            using (JJASDBEntities db = new JJASDBEntities())
+            {
+                Product product = db.Products.Find(id);
+                return product;
+            }
+        }
+        catch (Exception)
+        {
+            return null;
+        }
+    }
+
+    public List<Product> GetAllProducts()
+    {
+        try
+        {
+            using (JJASDBEntities db = new JJASDBEntities())
+            {
+                List<Product> products = (from x in db.Products
+                                          select x).ToList();
+                return products;
+            }
+        }
+        catch (Exception)
+        {
+            return null;
+        }
+    }
+
+    public List<Product> GetProductsByType(int typeId)
+    {
+        try
+        {
+            using (JJASDBEntities db = new JJASDBEntities())
+            {
+                List<Product> products = (from x in db.Products
+                                          where x.TypeID == typeId
+                                          select x).ToList();
+                return products;
+            }
+        }
+        catch (Exception)
+        {
+            return null;
+        }
+    }
 }

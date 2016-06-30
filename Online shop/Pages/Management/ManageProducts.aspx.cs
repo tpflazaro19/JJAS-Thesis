@@ -12,7 +12,51 @@ public partial class Pages_Management_ManageProducts : System.Web.UI.Page
     protected void Page_Load(object sender, EventArgs e)
     {
         if (!IsPostBack)
+        {
             GetImages();
+
+            //Check if the url contains an id parameter
+            if(!String.IsNullOrWhiteSpace(Request.QueryString["id"]))
+            {
+                int id = Convert.ToInt32(Request.QueryString["id"]);
+                FillPage(id);
+            }
+        }
+    }
+
+    private void FillPage(int id)
+    {
+        //Get selected product from DB
+        ProductModel productModel = new ProductModel();
+        Product product = productModel.GetProduct(id);
+
+        //Fill Textboxes
+        txtDescription.Text = product.Description;
+        txtName.Text = product.Name;
+        txtPrice.Text = product.Price.ToString();
+
+        //Set dropdownlist values
+        ddlImage.SelectedValue = product.Image;
+        ddlType.SelectedValue = product.TypeID.ToString();
+    }
+
+    protected void btnSubmit_Click(object sender, EventArgs e)
+    {
+        ProductModel productModel = new ProductModel();
+        Product product = CreateProduct();
+
+        //Check if the url contains an id parameter
+        if (!String.IsNullOrWhiteSpace(Request.QueryString["id"]))
+        {
+            //ID exists -> Update existing row
+            int id = Convert.ToInt32(Request.QueryString["id"]);
+            lblResult.Text = productModel.UpdateProduct(id, product);
+        }
+        else
+        {
+            //ID does not exist -> Create a new row
+            lblResult.Text = productModel.InsertProduct(product);
+        }
     }
 
     private void GetImages()
@@ -54,11 +98,4 @@ public partial class Pages_Management_ManageProducts : System.Web.UI.Page
         return product;
     }
 
-    protected void btnSubmit_Click(object sender, EventArgs e)
-    {
-        ProductModel productModel = new ProductModel();
-        Product product = CreateProduct();
-
-        lblResult.Text = productModel.InsertProduct(product);
-    }
 }
