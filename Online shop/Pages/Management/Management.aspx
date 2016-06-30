@@ -5,6 +5,7 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
     <asp:LinkButton ID="LinkButton1" runat="server" CssClass="button" EnableTheming="True" PostBackUrl="~/Pages/Management/ManageProducts.aspx">Add New Product</asp:LinkButton>
     <br />
+    <br />
     <asp:GridView ID="grdProducts" runat="server" AllowPaging="True" AllowSorting="True" AutoGenerateColumns="False" DataKeyNames="ID" DataSourceID="sdsProducts" Width="100%" BackColor="White" BorderColor="#DEDFDE" BorderStyle="None" BorderWidth="1px" CellPadding="4" ForeColor="Black" GridLines="Vertical" OnRowEditing="grdProducts_RowEditing">
         <AlternatingRowStyle BackColor="White" />
         <Columns>
@@ -48,6 +49,7 @@
     </asp:SqlDataSource>
     <br />
     <asp:LinkButton ID="LinkButton2" runat="server" CssClass="button" EnableTheming="True" PostBackUrl="~/Pages/Management/ManageProductTypes.aspx">Add New Product Type</asp:LinkButton>
+    <br />
     <br />
     <asp:GridView ID="grdProductTypes" runat="server" AllowPaging="True" AllowSorting="True" AutoGenerateColumns="False" DataKeyNames="ID" DataSourceID="sdsProductTypes" style="margin-right: 0px" Width="50%" BackColor="White" BorderColor="#DEDFDE" BorderStyle="None" BorderWidth="1px" CellPadding="4" ForeColor="Black" GridLines="Vertical">
         <AlternatingRowStyle BackColor="White" />
