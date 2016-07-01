@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNet.Identity;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -40,21 +41,29 @@ public partial class Pages_Product : System.Web.UI.Page
     {
         if(!string.IsNullOrWhiteSpace(Request.QueryString["id"]))
         {
-            string clientId = "-1";
-            int id = Convert.ToInt32(Request.QueryString["id"]);
-            int amount = Convert.ToInt32(ddlAmount.SelectedValue);
+            string clientId = Context.User.Identity.GetUserId();
 
-            Cart cart = new Cart
+            if (clientId != null)
             {
-                Amount = amount,
-                ClientID = clientId,
-                DatePurchased = DateTime.Now,
-                IsInCart = true,
-                ProductID = id
-            };
+                int id = Convert.ToInt32(Request.QueryString["id"]);
+                int amount = Convert.ToInt32(ddlAmount.SelectedValue);
 
-            CartModel model = new CartModel();
-            lblResult.Text = model.InsertCart(cart);
+                Cart cart = new Cart
+                {
+                    Amount = amount,
+                    ClientID = clientId,
+                    DatePurchased = DateTime.Now,
+                    IsInCart = true,
+                    ProductID = id
+                };
+
+                CartModel model = new CartModel();
+                lblResult.Text = model.InsertCart(cart);
+            }
+            else
+            {
+                lblResult.Text = "Please login to order items";
+            }
         }
     }
 }
