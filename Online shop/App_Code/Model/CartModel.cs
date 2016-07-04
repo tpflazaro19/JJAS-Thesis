@@ -66,4 +66,60 @@ public class CartModel
             return "Error:" + e;
         }
     }
+
+    public List<Cart> GetOrdersInCart(string userId)
+    {
+        JJASDBEntities db = new JJASDBEntities();
+        List<Cart> orders = (from x in db.Carts
+                             where x.ClientID == userId
+                             && x.IsInCart
+                             orderby x.DatePurchased
+                             select x).ToList();
+
+        return orders;
+    }
+
+    public int GetAmountOfOrders(string userId)
+    {
+        try
+        {
+            JJASDBEntities db = new JJASDBEntities();
+            int amount = (from x in db.Carts
+                          where x.ClientID == userId
+                          && x.IsInCart
+                          select x.Amount).Sum();
+
+            return amount;
+        }
+        catch
+        {
+            return 0;
+        }
+    }
+
+    public void UpdateQuantity(int id, int quantity)
+    {
+        JJASDBEntities db = new JJASDBEntities();
+        Cart cart = db.Carts.Find(id);
+        cart.Amount = quantity;
+
+        db.SaveChanges();
+    }
+
+    public void MarkOrderAsPaid(List<Cart> carts)
+    {
+        JJASDBEntities db = new JJASDBEntities();
+
+        if(carts != null)
+        {
+            foreach (Cart cart in carts)
+            {
+                Cart oldCart = db.Carts.Find(cart.ID);
+                oldCart.DatePurchased = DateTime.Now;
+                oldCart.IsInCart = false;
+            }
+
+            db.SaveChanges();
+        }
+    }
 }
