@@ -11,6 +11,10 @@
         <AssociationConnector Association="JJASDBModel.FK_Cart_Product" ManuallyRouted="false" />
         <AssociationConnector Association="JJASDBModel.FK_Product_ProductTypes" ManuallyRouted="false" />
         <EntityTypeShape EntityType="JJASDBModel.UserInformation" Width="1.5" PointX="0.75" PointY="4.75" />
+        <EntityTypeShape EntityType="JJASDBModel.Store" Width="1.5" PointX="3.375" PointY="4.75" />
+        <EntityTypeShape EntityType="JJASDBModel.ProductStock" Width="1.5" PointX="5.625" PointY="4.625" />
+        <AssociationConnector Association="JJASDBModel.FK_ProductStocks_Product" />
+        <AssociationConnector Association="JJASDBModel.FK_ProductStocks_Store" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

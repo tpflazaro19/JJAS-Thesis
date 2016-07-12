@@ -27,4 +27,6 @@ public partial class JJASDBEntities : DbContext
     public virtual DbSet<Product> Products { get; set; }
     public virtual DbSet<ProductType> ProductTypes { get; set; }
     public virtual DbSet<UserInformation> UserInformations { get; set; }
+    public virtual DbSet<Store> Stores { get; set; }
+    public virtual DbSet<ProductStock> ProductStocks { get; set; }
 }

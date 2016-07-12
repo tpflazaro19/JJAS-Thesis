@@ -24,14 +24,23 @@
             </td><br/>
         </tr>
         <tr>
-            <td>Product No:
+            <td>Product No:&nbsp;&nbsp;
+                <asp:Label ID="lblItemNr" runat="server" Text="Label"></asp:Label>
                 <br />
-                <asp:Label ID="lblItemNr" runat="server" Text="Label"></asp:Label></td>
+                </td>
         </tr>
         <tr>
             <td>
+                <strong>Store Location:</strong><br />
+                <br />
+                1. <strong>Branch:</strong>
+                <asp:Label ID="lblStore" runat="server"></asp:Label>
+&nbsp; Distance:<br />
                 <asp:Label ID="Label1" runat="server" Text="Available" CssClass="productPrice"></asp:Label></td>
         </tr>
     </table>
+    <br />
+    <asp:Panel ID="Panel1" runat="server">
+    </asp:Panel>
 </asp:Content>
 

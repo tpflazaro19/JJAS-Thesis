@@ -28,6 +28,7 @@ public partial class Product
     public Product()
     {
         this.Carts = new HashSet<Cart>();
+        this.ProductStocks = new HashSet<ProductStock>();
     }
 
     public int ID { get; set; }
@@ -36,10 +37,25 @@ public partial class Product
     public Nullable<double> Price { get; set; }
     public string Description { get; set; }
     public string Image { get; set; }
+    public Nullable<int> Stock { get; set; }
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
     public virtual ICollection<Cart> Carts { get; set; }
     public virtual ProductType ProductType { get; set; }
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+    public virtual ICollection<ProductStock> ProductStocks { get; set; }
+}
+
+public partial class ProductStock
+{
+    public int ID { get; set; }
+    public int StoreID { get; set; }
+    public int ProductID { get; set; }
+    public Nullable<int> Stock { get; set; }
+    public Nullable<int> MaxStock { get; set; }
+
+    public virtual Product Product { get; set; }
+    public virtual Store Store { get; set; }
 }
 
 public partial class ProductType
@@ -55,6 +71,22 @@ public partial class ProductType
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
     public virtual ICollection<Product> Products { get; set; }
+}
+
+public partial class Store
+{
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+    public Store()
+    {
+        this.ProductStocks = new HashSet<ProductStock>();
+    }
+
+    public int ID { get; set; }
+    public string Address { get; set; }
+    public string Location { get; set; }
+
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+    public virtual ICollection<ProductStock> ProductStocks { get; set; }
 }
 
 public partial class UserInformation

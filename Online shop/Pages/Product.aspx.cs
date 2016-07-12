@@ -21,7 +21,8 @@ public partial class Pages_Product : System.Web.UI.Page
             int id = Convert.ToInt32(Request.QueryString["id"]);
             ProductModel productModel = new ProductModel();
             Product product = productModel.GetProduct(id);
-
+            ProductStocksModel productStockModel = new ProductStocksModel();
+            
             //Fill page with data
             lblPrice.Text = "Price per unit: <br/>₱ " + product.Price;
             lblTitle.Text = product.Name;
