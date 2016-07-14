@@ -25,4 +25,20 @@ public class ProductStocksModel
             return null;
         }
     }
+
+    public ProductStock GetProductStock(int id)
+    {
+        try
+        {
+            using (JJASDBEntities db = new JJASDBEntities())
+            {
+                ProductStock stock = db.ProductStocks.Find(id);
+                return stock;
+            }
+        }
+        catch (Exception)
+        {
+            return null;
+        }
+    }
 }
