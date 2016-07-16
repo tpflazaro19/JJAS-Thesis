@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
@@ -52,7 +53,33 @@ public partial class Pages_Product : System.Web.UI.Page
     {
         ProductStocksModel productStockModel = new ProductStocksModel();
         StoreModel storeModel = new StoreModel();
+        Table table = new Table { CssClass = "cartTable" };
 
+        //Create Table header
+        TableRow h = new TableRow();
+
+        //Create 4 cells for row a
+        TableCell h1 = new TableCell { Text = "Branch<hr/>" };
+        TableCell h2 = new TableCell { Text = "Location<hr/>" };
+        TableCell h3 = new TableCell { Text = "Availability<hr/>" };
+        TableCell h4 = new TableCell { Text = "Remarks<hr/>" };
+        h1.Font.Bold = true;
+        h2.Font.Bold = true;
+        h3.Font.Bold = true;
+        h4.Font.Bold = true;
+
+        //Add cells to rows
+        h.Cells.Add(h1);
+        h.Cells.Add(h2);
+        h.Cells.Add(h3);
+        h.Cells.Add(h4);
+
+        //Add rows to table
+        table.Rows.Add(h);
+
+        //Add table to pnlStoreList
+        pnlStoreList.Controls.Add(table);
+        
         foreach (ProductStock productStock in stockList)
         {
             Store store = storeModel.GetBranch(productStock.StoreID);
@@ -61,113 +88,72 @@ public partial class Pages_Product : System.Web.UI.Page
             //Generate list with numbers from 0 to max stock
             int stock = Convert.ToInt32(productStock.Stock);
             int maxStock = Convert.ToInt32(productStock.MaxStock);
-            string availablity = "Not Specified";
-            int[] amount = Enumerable.Range(0, stock).ToArray();
-            DropDownList ddlAmount = new DropDownList
-            {
-                DataSource = amount,
-                AppendDataBoundItems = true,
-                AutoPostBack = true,
-                ID = productStock.ID.ToString()
-            };
 
-            ddlAmount.DataBind();
-            //ddlAmount.SelectedIndexChanged += ddlAmount_SelectedIndexChanged;
+            //Create HTML table with 1 row
+            
+            TableRow a = new TableRow();
+
+            //Create 4 cells for row a
+            TableCell a1 = new TableCell { Text = store.Address };
+            TableCell a2 = new TableCell { Text = store.Location };
+            TableCell a3 = new TableCell { };
+            TableCell a4 = new TableCell { };
 
             //Determine product availability
             if (stock == 0)
             {
-                availablity = "Unavailable";
+                a3.Text = "Unavailable";
+                a3.Font.Bold = true;
+                a3.ForeColor = Color.Red;
+                a4.Text = "Ready in 3 days";
+                a4.ForeColor = Color.Red;
             }
             else
             {
                 if (stock < 0.25 * maxStock)
                 {
-                    availablity = "Low availability";
+                    a3.Text = "low";
+                    a3.Font.Bold = true;
+                    a3.ForeColor = Color.Yellow;
+                    
                 }
                 else
                 {
-                    availablity = "Available";
+                    a3.Text = "high";
+                    a3.Font.Bold = true;
+                    a3.ForeColor = Color.Green;
                 }
+                a4.Text = "Ready in an hour";
+                a4.ForeColor = Color.Green;
             }
-
-            //Create the Add to cart link
-            LinkButton lnkAdd = new LinkButton
-            {
-                //PostBackUrl = string.Format("~/Pages/Product.aspx?id={0}", productStock.ProductID),
-                Text = "Add to cart",
-                ID = "add" + productStock.ID,
-                CssClass = "button"
-            };
-
-            //Add an OnClick Event
-            //lnkAdd.Click += (sender, e) => Add_Item(sender, e, amount);
-
-            //Create checkboxes
-            CheckBox cbSelectStore = new CheckBox
-            {
-                ID = "select" + productStock.ID,
-                AutoPostBack = true
-            };
             
-            cbSelectStore.CheckedChanged += cbSelectStore_CheckedChanged;
-
-            //Create HTML table with 1 row
-            Table table = new Table { CssClass = "cartTable" };
-            TableRow a = new TableRow();
-
-            //Create 4 cells for row a
-            TableCell a1 = new TableCell { Text = "Branch: " + store.Address };
-            TableCell a2 = new TableCell { Text = "Location: " + store.Location };
-            TableCell a3 = new TableCell { Text =  availablity };
-            TableCell a4 = new TableCell { };
-            TableCell a5 = new TableCell { };
-
             //Set 'special' controls
-            a4.Controls.Add(ddlAmount);
-            //a5.Controls.Add(lnkAdd);
-            a5.Controls.Add(cbSelectStore);
+            //a4.Controls.Add(ddlAmount);
 
             //Add cells to rows
             a.Cells.Add(a1);
             a.Cells.Add(a2);
             a.Cells.Add(a3);
             a.Cells.Add(a4);
-            a.Cells.Add(a5);
 
             //Add rows to table
             table.Rows.Add(a);
 
             //Add table to pnlStoreList
-            pnlStoreList.Controls.Add(table);
+            //pnlStoreList.Controls.Add(table);
         }
+
+        Button btnCancel = new Button
+        {
+            Text = "Close",
+            ID = "btnCancel",
+            CssClass = "button",
+            OnClientClick = "return Hidepopup()"
+        };
+        pnlStoreList.Controls.Add(btnCancel);
     }
 
-    private void cbSelectStore_CheckedChanged(object sender, EventArgs e)
-    {
-        CheckBox selectedRow = (CheckBox)sender;
-        string row = selectedRow.ID.Replace("select", "");
-        int stockId = Convert.ToInt32(row);
-
-        ProductStocksModel productStockModel = new ProductStocksModel();
-        ProductStock productStock = productStockModel.GetProductStock(stockId);
-
-        //Fill Amount dropdownlist with numbers 1-max stock
-        int stock = Convert.ToInt32(productStock.Stock);
-        int maxStock = Convert.ToInt32(productStock.MaxStock);
-        int[] amount = Enumerable.Range(0, stock).ToArray();
-        ddlAmount.DataSource = amount;
-        ddlAmount.AppendDataBoundItems = true;
-        ddlAmount.DataBind(); 
-    }
-
-    private void ddlAmount_SelectedIndexChanged(object sender, EventArgs e)
-    {
-        DropDownList selectedList = (DropDownList)sender;
-        int amount = Convert.ToInt32(selectedList.SelectedValue);
-    }
-
-    private void Add_Item(object sender, EventArgs e, int amount)
+    private void Add_Item(object sender, EventArgs e)
     {
         LinkButton selectedLink = (LinkButton)sender;
         string link = selectedLink.ID.Replace("add", "");
@@ -180,6 +166,7 @@ public partial class Pages_Product : System.Web.UI.Page
             if (clientId != null)
             {
                 int id = Convert.ToInt32(Request.QueryString["id"]);
+                int amount = Convert.ToInt32(txtAmount.Text);
                 //int amount = Convert.ToInt32(ddlAmount.SelectedValue);
 
                 Cart cart = new Cart
@@ -199,14 +186,6 @@ public partial class Pages_Product : System.Web.UI.Page
                 lblResult.Text = "Please login to order items";
             }
         }
-        //LinkButton selectedLink = (LinkButton)sender;
-        //string link = selectedLink.ID.Replace("add", "");
-        //int cartId = Convert.ToInt32(link);
-
-        //CartModel model = new CartModel();
-        //model.DeleteCart(cartId);
-
-        //Response.Redirect("~/Pages/ShoppingCart.aspx");
     }
 
     protected void btnAdd_Click(object sender, EventArgs e)
@@ -218,7 +197,7 @@ public partial class Pages_Product : System.Web.UI.Page
             if (clientId != null)
             {
                 int id = Convert.ToInt32(Request.QueryString["id"]);
-                int amount = Convert.ToInt32(ddlAmount.SelectedValue);
+                int amount = Convert.ToInt32(txtAmount.Text);
 
                 Cart cart = new Cart
                 {
@@ -237,5 +216,10 @@ public partial class Pages_Product : System.Web.UI.Page
                 lblResult.Text = "Please login to order items";
             }
         }
+    }
+
+    protected void btnShowStore_Click(object sender, EventArgs e)
+    {
+        storePopup.Show();
     }
 }

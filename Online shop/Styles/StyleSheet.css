@@ -170,3 +170,25 @@
     {
         width: 100px;
     }
+
+.modalBackground
+{
+    background-color: Black;
+    filter: alpha(opacity=60);
+    opacity: 0.6;
+}
+
+.modalPopup
+{
+    background-color: #FFFFFF;
+    width: 600px;
+    border: 3px solid #0DA9D0;
+    border-radius: 12px;
+    padding: 0
+}
+
+.checkBox {
+    min-width: 25px;
+    width: 25px;
+    position: relative;
+}

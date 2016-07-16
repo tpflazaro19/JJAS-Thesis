@@ -1,5 +1,7 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="Product.aspx.cs" Inherits="Pages_Product" %>
 
+<%@ Register assembly="AjaxControlToolkit" namespace="AjaxControlToolkit" tagprefix="ajaxToolkit" %>
+
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
@@ -10,41 +12,44 @@
             <td><h2/>
                 <asp:Label ID="lblTitle" runat="server" Text="Label"></asp:Label>
                 <hr/>
-                <asp:Label ID="lblPrice" runat="server" CssClass="detailsPrice"></asp:Label></td>
-        </tr>
-        <tr>
-            <td>
-    <asp:Panel ID="pnlStoreList" runat="server">
-    </asp:Panel>
-            </td>
-            <td>
-                <br/>
-                <br/>
-                <br/>
-                <br />
-                <br />
-            </td>
-        </tr>
-        <tr>
-            <td>Product No:&nbsp;&nbsp;
-                <asp:Label ID="lblItemNr" runat="server" Text="Label"></asp:Label>
-                <br />
                 </td>
         </tr>
         <tr>
             <td>
+    <asp:Panel ID="pnlStoreList" runat="server" CssClass="modalPopup" style="display:none" Width="600px">
+    </asp:Panel>
+                Item no. :
+                <asp:Label ID="lblItemNr" runat="server" Text="Label"></asp:Label>
+                <br />
+                <asp:Label ID="lblPrice" runat="server" CssClass="detailsPrice"></asp:Label>
+                <br />
+                <br />
                 <asp:Label ID="lblDescription" runat="server" CssClass="detailsDescription"></asp:Label>
                 <br />
-                Quantity:
-                <asp:DropDownList ID="ddlAmount" runat="server">
-                </asp:DropDownList>
                 <br />
-                <asp:Button ID="btnAdd" runat="server" CssClass="button" OnClick="btnAdd_Click" Text="Add Product" />
+            </td>
+            <td>
+                Quantity:&nbsp;
+                <asp:TextBox ID="txtAmount" runat="server" TextMode="Number" Width="30px"></asp:TextBox>
+                <br />
+                <br />
+                <asp:Button ID="btnAdd" runat="server" CssClass="button" OnClick="btnAdd_Click" Text="ADD TO CART" />
                 <br />
                 <asp:Label ID="lblResult" runat="server" Text=""></asp:Label>
+                <br />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                &nbsp;<asp:Button ID="btnShowStore" runat="server" Text="Check In-Store Availability" OnClick="btnAdd_Click" CssClass="button" />
+                <ajaxToolkit:ModalPopupExtender ID="storePopup" runat="server" DropShadow="false" 
+                    PopupControlID="pnlStoreList" TargetControlID="btnShowStore" BackgroundCssClass="modalBackground">
+                </ajaxToolkit:ModalPopupExtender>
+                <br />
                 </td>
         </tr>
     </table>
-    <br />
+    <asp:ScriptManager ID="ScriptManager1" runat="server">
+    </asp:ScriptManager>
     </asp:Content>
 
