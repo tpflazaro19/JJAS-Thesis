@@ -41,7 +41,12 @@
 
         <tr>
             <td>
-                &nbsp;</td>
+                <asp:DropDownList ID="DropDownList1" runat="server">
+                    <asp:ListItem>-- Choose Option --</asp:ListItem>
+                    <asp:ListItem Value="ship">Ship to Home</asp:ListItem>
+                    <asp:ListItem Value="pickup">Store Pick-up</asp:ListItem>
+                </asp:DropDownList>
+            </td>
         </tr>
     </table>
 </asp:Content>

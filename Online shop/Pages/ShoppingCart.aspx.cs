@@ -76,6 +76,20 @@ public partial class Pages_ShoppingCart : System.Web.UI.Page
             ddlAmount.SelectedValue = cart.Amount.ToString();
             ddlAmount.SelectedIndexChanged += ddlAmount_SelectedIndexChanged;
 
+            //Create delivery option ddl
+            string[] option = new string[3] { "-- Choose Option --", "Store pick - up", "Ship to Home" };
+            DropDownList ddlDelivery = new DropDownList
+            {
+                DataSource = option,
+                AppendDataBoundItems = true,
+                Width = 120,
+                ID = "list" + cart.ID.ToString()
+            };
+
+            ddlDelivery.DataBind();
+            ddlDelivery.SelectedIndexChanged += ddlDelivery_SelectedIndexChanged;
+
+
             //Create HTML table with 2 rows
             Table table = new Table { CssClass = "cartTable" };
             TableRow a = new TableRow();
@@ -85,24 +99,27 @@ public partial class Pages_ShoppingCart : System.Web.UI.Page
             TableCell a1 = new TableCell { RowSpan = 2, Width = 50 };
             TableCell a2 = new TableCell { Text = string.Format("<h4>{0}</h4><br/>{1}<br/>In Stock",
                 product.Name, "Item No: " + product.ID),
-                HorizontalAlign = HorizontalAlign.Left, Width=350};
-            TableCell a3 = new TableCell { Text = "Unit Price<hr/>" };
-            TableCell a4 = new TableCell { Text = "Quantity<hr/>" };
-            TableCell a5 = new TableCell { Text = "Item Total<hr/>" };
-            TableCell a6 = new TableCell { };
+                HorizontalAlign = HorizontalAlign.Left, Width=150};
+            TableCell a3 = new TableCell { };
+            TableCell a4 = new TableCell { Text = "Unit Price<hr/>" };
+            TableCell a5 = new TableCell { Text = "Quantity<hr/>" };
+            TableCell a6 = new TableCell { Text = "Item Total<hr/>" };
+            TableCell a7 = new TableCell { };
 
             //Create 6 cells for row b
             TableCell b1 = new TableCell { };
-            TableCell b2 = new TableCell { Text = "₱ " + product.Price };
-            TableCell b3 = new TableCell { Text = "₱ " + Math.Round((cart.Amount * (double)product.Price), 2) };
-            TableCell b4 = new TableCell { };
+            TableCell b2 = new TableCell { };
+            TableCell b3 = new TableCell { Text = "₱ " + product.Price };
+            TableCell b4 = new TableCell { Text = "₱ " + Math.Round((cart.Amount * (double)product.Price), 2) };
             TableCell b5 = new TableCell { };
             TableCell b6 = new TableCell { };
+            TableCell b7 = new TableCell { };
 
             //Set 'special' controls
             a1.Controls.Add(btnImage);
-            a6.Controls.Add(lnkDelete);
-            b3.Controls.Add(ddlAmount);
+            a3.Controls.Add(ddlDelivery);
+            a7.Controls.Add(lnkDelete);
+            b5.Controls.Add(ddlAmount);
 
             //Add cells to rows
             a.Cells.Add(a1);
@@ -111,6 +128,7 @@ public partial class Pages_ShoppingCart : System.Web.UI.Page
             a.Cells.Add(a4);
             a.Cells.Add(a5);
             a.Cells.Add(a6);
+            a.Cells.Add(a7);
 
             b.Cells.Add(b1);
             b.Cells.Add(b2);
@@ -118,6 +136,7 @@ public partial class Pages_ShoppingCart : System.Web.UI.Page
             b.Cells.Add(b4);
             b.Cells.Add(b5);
             b.Cells.Add(b6);
+            b.Cells.Add(b7);
 
             //Add rows to table
             table.Rows.Add(a);
@@ -132,6 +151,11 @@ public partial class Pages_ShoppingCart : System.Web.UI.Page
 
         //Add current user's shopping cart to user specific session value
         Session[User.Identity.GetUserId()] = purchaseList;
+    }
+
+    private void ddlDelivery_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        throw new NotImplementedException();
     }
 
     private void ddlAmount_SelectedIndexChanged(object sender, EventArgs e)
