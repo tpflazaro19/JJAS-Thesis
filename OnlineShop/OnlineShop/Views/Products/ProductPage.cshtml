@@ -1,0 +1,239 @@
+﻿@using WebMatrix.Data
+
+@{
+    ViewBag.Title = "View";
+}
+
+@{
+    string id = Html.ViewContext.RouteData.Values["id"].ToString();
+    var db = Database.Open("DefaultConnection");
+    var selectItem = "SELECT * FROM Products WHERE ID = " + id;
+    var selectNearestStore = "SELECT TOP 1 Name FROM Stores ORDER BY Distance";
+    var storeList = "SELECT * FROM Stores ORDER BY Distance";
+    var nearestStore = db.QueryValue(selectNearestStore);
+    var defaultStore = nearestStore;
+    var storeID = db.QueryValue("SELECT ID FROM Stores WHERE Name = '" + defaultStore + "'");
+    var selectStock = "SELECT NumStock FROM Stocks WHERE StoreID = " + storeID + " AND ProductID = " + id;
+    int storeStock = db.QueryValue(selectStock);
+    var prodCfg = "SELECT Config FROM Products WHERE ID = " + id;
+    string config = db.QueryValue(prodCfg);
+    string[] cfgList = config.Split(',');
+    string[] strName = new string[10];
+
+    // Query to update cart
+    var addToCart = "IF EXISTS (SELECT * FROM ShoppingCarts WHERE Item=@1 AND Config=@5 AND Store=@6)\n" +
+                    "BEGIN\n" +
+                    "UPDATE ShoppingCarts SET Quantity = Quantity + @4, Price = Price + @3 WHERE Item=@1 AND Config=@5 AND Store=@6\n " +
+                    "UPDATE Stocks SET NumStock = NumStock - @4 WHERE StoreID = " + storeID + " AND ProductID = " + id + "\n" +
+                    "END\n" +
+                    "ELSE\n" +
+                    "BEGIN\n" +
+                    "INSERT INTO ShoppingCarts (Image, Item, OrderType, Price, Quantity, Config, Store) " +
+                    "VALUES (@0, @1, @2, @3, @4, @5, @6)\n" +
+                    "UPDATE Stocks SET NumStock = NumStock - @4 WHERE StoreID = " + storeID + " AND ProductID = " + id + "\n" +
+                    "END";
+
+    string img, itm, orderType, cfg, str;
+    int qty;
+    decimal price;
+
+    int i = 0;
+
+    if (IsPost)
+    {
+        if (Request.Form["select"] != null)
+        {
+            defaultStore = Request.Form["storeName"];
+            storeID = db.QueryValue("SELECT ID FROM Stores WHERE Name = '" + defaultStore + "'");
+            storeStock = db.QueryValue("SELECT NumStock FROM Stocks WHERE StoreID = " + storeID + " AND ProductID = " + id);
+        }
+        else if (Request.Form["addCart"] != null)
+        {
+            img = Request.Form["image"];
+            itm = Request.Form["item"];
+            orderType = Request["option"];
+            cfg = Request.Form["config"];
+            str = Request.Form["store"];
+            qty = Int32.Parse(Request.Form["qty"]);
+            price = Decimal.Parse(Request.Form["price"]);
+
+            if (orderType == "sth")
+            {
+                str = "Warehouse";
+            }
+
+            db.Execute(addToCart, img, itm, orderType, price, qty, cfg, str);
+
+            Response.Redirect("~/Products/ProductPage/" + id);
+        }
+
+
+    }
+
+    string availability;
+    if (storeStock < 5)
+    {
+        availability = "LOW";
+    }
+    else
+    {
+        availability = "HIGH";
+    }
+}
+
+@foreach (var item in db.Query(selectItem))
+{
+    <div class="container-fluid">
+        <div class="content-wrapper">
+            <div class="item-container">
+                <div class="container">
+                    <div class="col-md-12">
+                        <form method="post" action="">
+                            <div class="col-md-4">
+                                <div class="photo">
+                                    <img src="@item.Image" alt="item_img" />
+                                    <input type="hidden" value="http://placehold.it/50x50" name="image" />
+                                </div>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="product-title">@item.Item</div>
+                                <input type="hidden" value="@item.Item" name="item" />
+                                <div class="product-desc">@item.Description</div>
+                                <div class="product-rating"><i class="glyphicon glyphicon-star gold"></i> <i class="glyphicon glyphicon-star gold"></i> <i class="glyphicon glyphicon-star gold"></i> <i class="glyphicon glyphicon-star gold"></i> <i class="glyphicon glyphicon-star-empty"></i> </div>
+                                <h3>₱ @item.Price</h3>
+                                <input type="hidden" value="@item.Price" name="price" />
+                                <div class="product-stock">Availability: @availability</div>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <h4>Choose Size:</h4>
+                                        <div class="input-group pos-bot-right col-md-7">
+                                            <select class="form-control" name="config">
+                                                <option>@cfgList[0]</option>
+                                                <option>@cfgList[1]</option>
+                                                <option>@cfgList[2]</option>
+                                            </select>
+                                        </div>
+                                        <h4>Quantity:</h4>
+                                        <div class="input-group col-md-4">
+                                            <input type="number" name="qty" class="form-control" value="0" min="0" max="@storeStock" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <input type="radio" name="option" value="sth" checked />
+                                        <i class="glyphicon glyphicon-ok-sign"></i> Ship-to-Home<br>
+                                        <input type="radio" name="option" value="fsp" />
+                                        <i class="glyphicon glyphicon-ok-sign"></i> Free Store Pickup at
+                                        <h4>@defaultStore</h4>
+                                        <input type="hidden" value="@defaultStore" name="store" />
+                                        <p>
+                                            <a class="hidden-sm" data-toggle="modal" data-target="#storeModal">Select another store</a>
+                                        </p>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="btn-group cart">
+                                    <input type="submit" name="addCart" class="btn btn-success" value="Add to cart" />
+                                </div>
+                                <div class="btn-group wishlist">
+                                    <button type="button" class="btn btn-danger">
+                                        Add to wishlist
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+    <div class="container">
+        <!-- Modal -->
+        <div class="modal fade" id="storeModal" role="dialog">
+            <div class="modal-dialog modal-lg">
+                <!-- Modal content-->
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="panel panel-info">
+                            <div class="panel-heading">
+                                <div class="panel-title">
+                                    <div class="row">
+                                        <div class="col-xs-6">
+                                            <h5><span class="glyphicon glyphicon-shopping-cart"></span> Store List</h5>
+                                        </div>
+                                        <div class="col-xs-6">
+                                            <button type="button" class="btn btn-primary btn-sm btn-block">
+                                                <span class="glyphicon glyphicon-share-alt"></span> Continue shopping
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <form method="post" action="">
+                                <div class="panel-body">
+                                    @foreach (var store in db.Query(storeList))
+                                    {
+                                        strName[i] = store.Name;
+                                        storeID = store.ID;
+                                        <div class="row">
+                                            <div class="col-xs-6">
+                                                <h4 class="product-name"><strong>@store.Name</strong></h4>
+                                                @store.Location<br />
+                                                Distance: @store.Distance km | Phone: @store.Phone
+                                            </div>
+                                            @if (db.QueryValue("SELECT NumStock FROM Stocks WHERE StoreID = " + storeID + " AND ProductID = " + id) > 0)
+                                            {
+                                                <div class="col-xs-6">
+                                                    <div class="col-xs-6">
+                                                        <h4>Available</h4>
+                                                    </div>
+
+                                                    <div class="col-xs-6">
+                                                        <input type="submit" name="select" class="btn btn-primary" value="SELECT" onclick="changeStr('@strName[i]')" />
+                                                        <h5 style="font-weight:bold;">Free Store Pickup</h5>
+                                                        <h5>Ready in an hour</h5>
+                                                    </div>
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div class="col-xs-6">
+                                                    <div class="col-xs-6">
+                                                        <h4>Unavailable</h4>
+                                                    </div>
+
+                                                    <div class="col-xs-6">
+                                                        <h5>
+                                                            Out of stock or
+                                                            not available in this store.
+                                                        </h5>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                        <hr>
+                                        i++;
+                                    }
+                                    <input type="text" id="store" name="storeName" value="@defaultStore" />
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+<script>
+    function changeStr(str) {
+    document.getElementById("store").value = str;
+    }
+
+    function order() {
+        $.get("/ShoppingCart/UpdateOrder", function (data) {
+            $("p").html(data);
+        });
+        alert("Order has been successfully processed!");
+    }
+</script>

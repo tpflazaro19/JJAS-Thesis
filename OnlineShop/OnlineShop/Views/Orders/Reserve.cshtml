@@ -1,0 +1,132 @@
+﻿@model IEnumerable<OnlineShop.Models.Order>
+@{
+    ViewBag.Title = "Checkout";
+}
+
+@{ 
+    string orderType;
+    decimal totalPrice = 0;
+}
+
+<div class="container wrapper">
+    <div class="row cart-head">
+        <div class="container">
+            <div class="row">
+                <p></p>
+            </div>
+            <div class="row">
+                <div style="display: table; margin: auto;">
+                    <span class="step step_complete"> <a href="#" class="check-bc">Cart</a> <span class="step_line step_complete"> </span> <span class="step_line backline"> </span> </span>
+                    <span class="step step_complete"> <a href="#" class="check-bc">Checkout</a> <span class="step_line "> </span> <span class="step_line step_complete"> </span> </span>
+                    <span class="step_thankyou check-bc step_complete">Thank you</span>
+                </div>
+            </div>
+            <div class="row">
+                <p></p>
+            </div>
+        </div>
+    </div>
+    <div class="row cart-body">
+        <form class="form-horizontal" method="post" action="">
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 col-md-push-6 col-sm-push-6">
+                <!--REVIEW ORDER-->
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        Review Order <div class="pull-right"><small><a class="afix-1" href="#">Edit Cart</a></small></div>
+                    </div>
+                    <div class="panel-body">
+                        @foreach (var item in Model)
+                        {
+                            <div class="form-group">
+                                <div class="col-sm-9 col-xs-9">
+                                    <div class="col-xs-12">@item.Quantity x @item.Item - @item.Config</div>
+                                    @if (item.OrderType == "sth")
+                                    {
+                                        orderType = "Reserve Online (Ship-to-Home)";
+                                    }
+                                    else
+                                    {
+                                        orderType = "Reserve at " + item.Store;
+                                    }
+                                    <div class="col-xs-12"><small>@orderType</small></div>
+                                </div>
+                                <div class="col-sm-3 col-xs-3 text-right">
+                                    <h5><span>₱</span> @item.Price</h5>
+                                </div>
+                            </div>
+                            <div class="form-group"><hr /></div>
+
+                            totalPrice += item.Price;
+                        }
+                        <div class="form-group">
+                            <div class="col-xs-12">
+                                <strong>Subtotal</strong>
+                                <div class="pull-right"><span>₱</span><span> @totalPrice</span></div>
+                            </div>
+                            <div class="col-xs-12">
+                                <small>Shipping</small>
+                                <div class="pull-right"><span>0</span></div>
+                            </div>
+                        </div>
+                        <div class="form-group"><hr /></div>
+                        <div class="form-group">
+                            <div class="col-xs-12">
+                                <strong>Order Total</strong>
+                                <div class="pull-right"><h4 style="font-weight:bold;"><span>₱</span><span> @totalPrice</span></h4></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--REVIEW ORDER END-->
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 col-md-pull-6 col-sm-pull-6">
+                <!--SHIPPING METHOD END-->
+                <!--CREDIT CART PAYMENT-->
+                <div class="panel panel-info">
+                    <div class="panel-heading"><span><i class="glyphicon glyphicon-lock"></i></span> Secure Payment</div>
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <div class="col-md-12"><strong>Email Address:</strong></div>
+                            <div class="col-md-12"><input type="text" class="form-control" name="car_number" value="juandelacruz@gmail.com" /></div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-12"><strong>First Name:</strong></div>
+                            <div class="col-md-12"><input type="text" class="form-control" name="car_number" value="Juan" /></div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-12"><strong>Last Name:</strong></div>
+                            <div class="col-md-12"><input type="text" class="form-control" name="car_code" value="Dela Cruz" /></div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-12"><strong>Phone Number:</strong></div>
+                            <div class="col-md-12"><input type="text" class="form-control" name="car_code" value="+(63) 999-1234-567" /></div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <span>Payment is made in-store for store pick-up and online for Ship-to-Home.</span>
+                                <span>We will gladly accept any of the following payment methods:</span>
+                            </div>
+                            <div class="col-md-12">
+                                <ul class="cards">
+                                    <li class="visa hand">Visa</li>
+                                    <li class="mastercard hand">MasterCard</li>
+                                </ul>
+                                <div class="clearfix"></div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <button type="submit" class="btn btn-primary btn-submit-fix">RESERVE NOW</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--CREDIT CART PAYMENT END-->
+            </div>
+
+        </form>
+    </div>
+    <div class="row cart-footer">
+
+    </div>
+</div>

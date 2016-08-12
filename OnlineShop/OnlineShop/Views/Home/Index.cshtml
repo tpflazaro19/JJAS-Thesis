@@ -1,0 +1,45 @@
+﻿@using WebMatrix.Data
+
+@{
+    ViewBag.Title = "Home Page";
+}
+
+@{
+    var db = Database.Open("DefaultConnection");
+    var selectItems = "SELECT * FROM Products ORDER BY ID";
+}
+
+<div class="jumbotron">
+    <h1>ASP.NET</h1>
+    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
+    <p><a href="http://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
+</div>
+
+<div class="row">
+    @foreach (var product in db.Query(selectItems))
+    {
+    <div class="col-sm-3">
+        <div class="col-item">
+            <div class="photo">
+                <a href="/Products/ProductPage/@product.ID">
+                    <img src="@product.Image" class="img-responsive" alt="a" stye="border:0;"/>
+                </a>
+            </div>
+            <div class="info">
+                <div class="row">
+                    <div class="price col-md-12">
+                        <h5>
+                            @product.Item
+                        </h5>
+                        <h5 class="price-text-color">
+                            ₱@product.Price
+                        </h5>
+                    </div>
+                </div>
+                <div class="clearfix">
+                </div>
+            </div>
+        </div>
+    </div>
+    }
+</div>
